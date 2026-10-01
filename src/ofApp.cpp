@@ -2,12 +2,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    takecolor("rainbow.png");
-    ofSetBackgroundColor(0, 0, 0);     //framerate(30);
+    
+    codedColour = true;
+    takecolor("mary source.jpeg");
+    ofSetBackgroundColor(255);     //framerate(30);
     
     ofSetFrameRate(50);
 
     resetAll();
+    
     
 
 }
@@ -49,6 +52,40 @@ void ofApp::keyPressed(int key){
 
     if (key == 'r') {
         resetAll();
+    }
+    
+    if(key == 's'){
+        ofSaveScreen(ofGetTimestampString()+ ".png");
+    }
+    
+    if(key == 'S'){
+        string date = ofGetTimestampString();
+        ofMesh saveMeshCol1, saveMeshCol2, saveMeshCol3;
+        for (int c=0;c<num;c++) {
+            
+            for (int i =0; i<3; i++) {
+                if(friends[c].sands[i].sandMesh.getColors().size()> 0){
+
+                    if (ofColor(friends[c].sands[i].sandMesh.getColor(0)).r == 147 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).g == 255 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).b == 216) {
+                        saveMeshCol1.append(friends[c].sands[i].sandMesh);
+
+                    }
+                    else if (ofColor(friends[c].sands[i].sandMesh.getColor(0)).r == 255 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).g == 166 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).b == 158) {
+                        saveMeshCol2.append(friends[c].sands[i].sandMesh);
+
+                    }
+                    else if (ofColor(friends[c].sands[i].sandMesh.getColor(0)).r == 70 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).g == 34 && ofColor(friends[c].sands[i].sandMesh.getColor(0)).b == 85) {
+                        saveMeshCol3.append(friends[c].sands[i].sandMesh);
+
+                    }
+                }
+                
+            }
+        }
+        
+        saveMeshCol1.save(date +  "_col_1.ply");
+        saveMeshCol2.save(date +  "_col_2.ply");
+        saveMeshCol3.save(date +  "_col_3.ply");
     }
    
 }
@@ -110,41 +147,52 @@ void ofApp::resetAll() {
 
 ofColor ofApp::somecolor() {
     // pick some random good color
-    return goodcolor[int(ofRandom(0, numpal))];
+    return goodcolor[int(ofRandom(0, maxpal))];
 }
 
 void ofApp::takecolor(string fn) {
-    ofImage b;
-    b.load(fn);
-    
-    
-    for (int x=0;x<b.getWidth();x++){
-        for (int y=0;y<b.getHeight();y++) {
-            ofColor c = b.getColor(x, y);
-            bool exists = false;
-            
-            for (int n=0;n<numpal;n++) {
-                if (c==goodcolor[n]) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                // add color to pal
-                if (numpal<maxpal) {
-                    goodcolor[numpal] = c;
-                    numpal++;
-                }
+    if (codedColour) {
+        for (int i = 0 ; i < maxpal - 3; i+=3) {
+            goodcolor[i] = ofColor(147,255,216,255);
+            goodcolor[i+1] = ofColor(255,166,158,255);
+            goodcolor[i+2] = ofColor(70,34,85,255);
+        }
+    }
+    else{
+        ofImage b;
+        b.load(fn);
+        
+        int colourGrabHStep;
+        int colourGrabVStep;
+        
+        colourGrabHStep =  b.getWidth()/ 32;
+        colourGrabVStep = b.getHeight()/ 16;
+        
+        for (int j = 0; j < 16; j++) {
+            for (int i = 0; i <32; i++) {
+                
+
+                goodcolor[ ((j * 32 + i))] = b.getColor( (i *colourGrabHStep),  (j *colourGrabVStep));
+
+
             }
         }
     }
-    // pump black and white in
-    for (int x=0;x<22;x++) {
-        goodcolor[numpal]=ofColor(0);
-        numpal++;
-        goodcolor[numpal]=ofColor(255);
-        numpal++;
-    }
+    
+
+    
+//    // pump black and white in
+//    for (int x=0;x<22;x++) {
+//        goodcolor[numpal]=ofColor(0);
+//        numpal++;
+//        goodcolor[numpal]=ofColor(255);
+//        numpal++;
+//    }
+    
+    //    for (int i = 0 ; i < maxpal ; i++) {
+    //        cout << ofToString(goodcolor[i])<<endl;
+    //    }
+    
 }
 
 //--------------------------------------------------------------

@@ -7,7 +7,8 @@
 
 #define num 128
 #define maxpal 512
-#define dimension 1080
+#define dimension 2560
+
 
 class ofApp : public ofBaseApp{
 
@@ -45,7 +46,7 @@ class ofApp : public ofBaseApp{
     
     void findHappyPlace();
     void exposeConnections(int friendFinder);
-    
+    bool codedColour;
     
 
     
